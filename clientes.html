@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clientes</title>
+  <link rel="stylesheet" href="clientes.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+      <button class="btn" onclick="location.href='Examen Vsita.html'">Examen Vista</button>
+      <button class="btn" onclick="location.href='Historial medico.html'">Historial medico</button>
+    </aside>
+
+    <!-- Sección principal -->
+    <main class="content">
+      <!-- Barra superior -->
+      <header class="topbar">
+        <h2>Clientes</h2>
+        <div class="search-area">
+          <label for="buscar">Buscar</label>
+          <input type="text" id="buscar" placeholder="Escribe un nombre...">
+          <button class="btn small">Buscar</button>
+          <button class="btn small">Mostrar todo</button>
+        </div>
+      </header>
+
+      <!-- Cuerpo principal -->
+      <div class="main-section">
+        <!-- Formulario lateral -->
+        <section class="forms">
+          <!-- Agregar clientes -->
+          <div class="form-card">
+            <h3>Agregar clientes</h3>
+            <label>Nombre</label>
+            <input type="text">
+            <label>Teléfono</label>
+            <input type="text">
+            <label>Correo</label>
+            <input type="email">
+            <label>Tipo de cliente</label>
+            <input type="text">
+            <button class="btn">Agregar</button>
+          </div>
+
+          <!-- Editar clientes -->
+          <div class="form-card">
+            <h3>Editar clientes</h3>
+            <label>Nombre</label>
+            <input type="text">
+            <label>Teléfono</label>
+            <input type="text">
+            <label>Correo</label>
+            <input type="email">
+            <label>Tipo de cliente</label>
+            <input type="text">
+            <button class="btn">Actualizar</button>
+          </div>
+        </section>
+
+        <!-- Panel de resultados -->
+        <section class="results">
+          <div class="results-box">
+            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
+            <p class="placeholder">Aquí aparecerán los resultados de clientes...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

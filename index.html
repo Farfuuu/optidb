@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <button class="btn" onclick="location.href='clientes.html'">Clientes</button>
+      <button class="btn" onclick="location.href='Empresas.html'">Empresas</button>
+      <button class="btn" onclick="location.href='Ventas.html'">Ventas</button>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="login-section">
+      <div class="login-box">
+        <h1>Iniciar sesión</h1>
+
+        <form>
+          <label for="usuario">Usuario</label>
+          <input type="text" id="usuario" placeholder="HT1Z24JU">
+
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="************">
+
+          <button type="submit" class="btn-login">Iniciar sesión</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

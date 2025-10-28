@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial medico</title>
+  <link rel="stylesheet" href="Ventas.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <button class="btn" onclick="location.href='clientes.html'">Clientes</button>
+      <button class="btn" onclick="location.href='Examen Vsita.html'">Examen Vista</button>
+      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+    </aside>
+
+    <!-- Sección principal -->
+    <main class="content">
+
+      <!-- Cuerpo principal -->
+      <div class="main-section">
+        <!-- Formulario lateral -->
+        <section class="forms-row">
+          <!-- Agregar Ventas -->
+          <div class="form-card">
+            <h3>Agregar Historial medico</h3>
+            <label>Id Hisotrial</label>
+            <input type="text">
+            <label>Fecha</label>
+            <input type="date">
+            <label>Descripcion</label>
+            <input type="text">
+            <label>Cirugias Previas</label>
+            <input type="text">
+            <button class="btn">Agregar</button>
+          </div>
+
+          <!-- Editar clientes -->
+          <div class="form-card">
+            <h3>Consultar Historial</h3>
+            <label>Id Hisotrial</label>
+            <input type="text">
+            <label>Fecha</label>
+            <input type="date">
+            <label>Descripcion</label>
+            <input type="text">
+            <label>Cirugias Previas</label>
+            <input type="text">
+            <button class="btn">Consultar</button>
+          </div>
+        </section>
+
+        <!-- Panel de resultados -->
+        <section class="results">
+          <div class="results-box">
+            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
+            <p class="placeholder">Aquí aparecerán Los Historiales medicos registrados ...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

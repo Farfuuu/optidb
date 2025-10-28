@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Ventas</title>
+  <link rel="stylesheet" href="Ventas.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+
+    </aside>
+
+    <!-- Sección principal -->
+    <main class="content">
+      <!-- Barra superior -->
+      <header class="topbar">
+        <h2>Historial de Ventas</h2>
+        <div class="search-area">
+          <label for="buscar">Buscar</label>
+          <input type="text" id="buscar" placeholder="Escribe un nombre...">
+          <button class="btn small">Buscar</button>
+          <button class="btn small">Mostrar todo</button>
+        </div>
+      </header>
+
+      <!-- Cuerpo principal -->
+      <div class="main-section">
+        <!-- Formulario lateral -->
+        <section class="forms-row">
+          <!-- Agregar Ventas -->
+          <div class="form-card">
+            <h3>Agregar Venta</h3>
+            <label>Nombre</label>
+            <input type="text">
+            <label>Fecha</label>
+            <input type="date">
+            <label>Total</label>
+            <input type="number">
+            <label>Tipo de Armazon</label>
+            <input type="text">
+            <button class="btn">Agregar</button>
+          </div>
+
+          <!-- Editar clientes -->
+          <div class="form-card">
+            <h3>Editar Venta</h3>
+            <label>Nombre</label>
+            <input type="text">
+            <label>Fecha</label>
+            <input type="date">
+            <label>Total</label>
+            <input type="number">
+            <label>Tipo de Armazon</label>
+            <input type="text">
+            <button class="btn">Actualizar</button>
+          </div>
+        </section>
+
+        <!-- Panel de resultados -->
+        <section class="results">
+          <div class="results-box">
+            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
+            <p class="placeholder">Aquí aparecerán Las Ventas ...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

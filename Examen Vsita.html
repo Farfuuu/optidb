@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Ventas</title>
+  <link rel="stylesheet" href="Ventas.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="layout">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <button class="btn" onclick="location.href='clientes.html'">Clientes</button>
+      <button class="btn" onclick="location.href='Historial medico.html'">Historial medico</button>
+      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+    </aside>
+
+    <!-- Sección principal -->
+    <main class="content">
+
+      <!-- Cuerpo principal -->
+      <div class="main-section">
+        <!-- Formulario lateral -->
+        <section class="forms-row">
+          <!-- Agregar Ventas -->
+          <div class="form-card">
+            <h3>Agregar Examen</h3>
+            <label>Id Examen</label>
+            <input type="text">
+            <label>Nombre</label>
+            <input type="text">
+            <label>Fecha del Examen</label>
+            <input type="date">
+            <label>Graduación ojo Izquierdo</label>
+            <input type="text">
+            <label>Graduación ojo Derecho</label>
+            <input type="text">
+            <button class="btn">Agregar</button>
+          </div>
+
+          <!-- Editar clientes -->
+          <div class="form-card">
+            <h3>Editar Examen</h3>
+            <label>Id del Examen</label>
+            <input type="text">
+            <label>Nombre</label>
+            <input type="text">
+            <label>Fecha del Examen</label>
+            <input type="date">
+            <label>Graduación ojo Izquierdo</label>
+            <input type="text">
+            <label>Graduación ojo Derecho</label>
+            <input type="text">
+            <button class="btn">Actualizar</button>
+          </div>
+        </section>
+
+        <!-- Panel de resultados -->
+        <section class="results">
+          <div class="results-box">
+            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
+            <p class="placeholder">Aquí aparecerán Los examenes de vista registrados ...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
