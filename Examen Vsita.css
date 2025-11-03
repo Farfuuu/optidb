@@ -27,22 +27,25 @@ body {
   min-width: 220px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  gap: 25px;
+  gap: 20px;
   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  padding-top: 40px;
 }
 
 .btn {
   background-color: #654ea3;
   color: white;
   border: none;
-  padding: 15px 40px;
+  padding: 14px 40px;
   border-radius: 30px;
   font-weight: 500;
   font-size: 15px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s;
+  width: 80%;
+  text-align: center;
 }
 
 .btn:hover {
@@ -53,6 +56,17 @@ body {
 .btn.small {
   padding: 10px 25px;
   font-size: 14px;
+  width: auto;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  margin-top: auto;
+  margin-bottom: 30px;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
 }
 
 /* ===== SECCIÓN PRINCIPAL ===== */
@@ -62,6 +76,7 @@ body {
   flex-direction: column;
   padding: 20px 40px;
   background-color: rgba(255, 255, 255, 0.8);
+  overflow-y: auto;
 }
 
 /* ===== BARRA SUPERIOR ===== */
@@ -74,16 +89,24 @@ body {
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .topbar h2 {
   color: #333;
 }
 
+.user-info {
+  color: #654ea3;
+  font-weight: 500;
+}
+
 .search-area {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .search-area input {
@@ -92,6 +115,7 @@ body {
   border: 2px solid #ccc;
   outline: none;
   transition: border 0.3s;
+  min-width: 200px;
 }
 
 .search-area input:focus {
@@ -99,45 +123,44 @@ body {
 }
 
 /* ===== ZONA PRINCIPAL ===== */
-/* ===== lo de abajo ===== */
 .main-section {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  flex: 1;
+  gap: 30px;
+  min-height: 0;
 }
 
 /* ===== FORMULARIOS ===== */
-.forms-row {
- display: flex;
- flex-direction: row;
- gap: 20px;
+.forms {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  min-height: 0;
 }
-
 
 .form-card {
-  flex: 1;
-  min-width: 350px;
-  background: #fff;
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 16px;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
-
-
 
 .form-card h3 {
   color: #333;
   margin-bottom: 15px;
+  border-bottom: 2px solid #654ea3;
+  padding-bottom: 8px;
 }
 
 .form-card label {
   display: block;
   font-size: 14px;
   margin-top: 10px;
+  font-weight: 500;
 }
 
-.form-card input {
+.form-card input, .form-card select {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
@@ -145,9 +168,10 @@ body {
   outline: none;
   margin-top: 5px;
   transition: border 0.3s;
+  font-family: 'Roboto', sans-serif;
 }
 
-.form-card input:focus {
+.form-card input:focus, .form-card select:focus {
   border-color: #654ea3;
 }
 
@@ -156,22 +180,226 @@ body {
   margin-top: 15px;
 }
 
+.cancelar-btn {
+  background-color: #6c757d !important;
+  margin-top: 10px !important;
+}
+
+.cancelar-btn:hover {
+  background-color: #5a6268 !important;
+}
+
 /* ===== RESULTADOS ===== */
 .results {
-  flex: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .results-box {
-  min-height: 250px;
   background-color: rgba(240, 235, 250, 0.6);
   border-radius: 16px;
   height: 100%;
   box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.placeholder {
-  color: #555;
-  font-style: italic;
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #654ea3;
+  padding-bottom: 10px;
+  flex-shrink: 0;
 }
 
+.results-header h3 {
+  color: #333;
+}
+
+#totalExamenes {
+  color: #654ea3;
+  font-weight: 500;
+}
+
+.examenes-lista {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: calc(100vh - 300px);
+}
+
+/* Estilos para la barra de scroll */
+.examenes-lista::-webkit-scrollbar {
+  width: 8px;
+}
+
+.examenes-lista::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.examenes-lista::-webkit-scrollbar-thumb {
+  background: #654ea3;
+  border-radius: 10px;
+}
+
+.examenes-lista::-webkit-scrollbar-thumb:hover {
+  background: #7b5dc6;
+}
+
+.examen-item {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.examen-info h4 {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.examen-info p {
+  color: #666;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.examen-acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-editar, .btn-eliminar {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.btn-editar {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #218838;
+}
+
+.btn-eliminar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #c82333;
+}
+
+/* ===== MENSAJES ===== */
+.mensaje {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  display: none;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  display: block;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  display: block;
+}
+
+/* ===== RESPONSIVIDAD ===== */
+@media (max-width: 1024px) {
+  .main-section {
+    flex-direction: column;
+  }
+  
+  .forms {
+    width: 100%;
+    flex-direction: row;
+  }
+  
+  .form-card {
+    flex: 1;
+  }
+  
+  .examenes-lista {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    padding: 15px;
+    gap: 10px;
+  }
+  
+  .btn {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .content {
+    padding: 15px;
+  }
+  
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .search-area {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .search-area input {
+    min-width: 150px;
+    flex: 1;
+  }
+  
+  .forms {
+    flex-direction: column;
+  }
+  
+  .examenes-lista {
+    max-height: 300px;
+  }
+}
+
+/* Mostrar/Ocultar placeholder de edición */
+#formEditar[style*="display: block"] ~ #editar-placeholder {
+    display: none;
+}

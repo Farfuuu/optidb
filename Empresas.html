@@ -8,10 +8,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+  <?php 
+  session_start();
+  if (!isset($_SESSION['user_id'])) {
+      header('Location: index.html');
+      exit();
+  }
+  ?>
+  
   <div class="layout">
     <!-- Panel lateral -->
     <aside class="sidebar">
-      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+      <button class="btn" onclick="location.href='Empresas.html'">Empresas</button>
+      <button class="btn" onclick="location.href='clientes.html'">Clientes</button>
+      <button class="btn" onclick="location.href='Ventas.html'">Ventas</button>
+      <button class="btn" onclick="location.href='Examen Vsita.html'">Examen Vista</button>
+      <button class="btn" onclick="location.href='Historial medico.html'">Historial médico</button>
+      <button class="btn logout-btn" onclick="location.href='logout.php'">Cerrar Sesión</button>
     </aside>
 
     <!-- Sección principal -->
@@ -19,55 +32,92 @@
       <!-- Barra superior -->
       <header class="topbar">
         <h2>Empresas</h2>
+        <div class="user-info">
+          <span>Bienvenido, <?php echo $_SESSION['nombre']; ?></span>
+        </div>
         <div class="search-area">
           <label for="buscar">Buscar</label>
-          <input type="text" id="buscar" placeholder="Escribe un nombre...">
-          <button class="btn small">Buscar</button>
+          <input type="text" id="buscar" placeholder="Escribe un nombre o RFC...">
+          <button class="btn small" onclick="buscarEmpresas()">Buscar</button>
+          <button class="btn small" onclick="mostrarTodo()">Mostrar todo</button>
         </div>
       </header>
 
       <!-- Cuerpo principal -->
       <div class="main-section">
-        <!-- Formulario lateral -->
+        <!-- Formularios -->
         <section class="forms">
-          <!-- Agregar clientes -->
+          <!-- Agregar Empresa -->
           <div class="form-card">
             <h3>Agregar Empresa</h3>
-            <label>Id Empresa</label>
-            <input type="text">
-            <label>Nombre</label>
-            <input type="text">
-            <label>RFC</label>
-            <input type="text">
-            <label>Direccion</label>
-            <input type="text">
-            <button class="btn">Agregar</button>
+            <form id="formAgregar">
+              <label for="nombre">Nombre *</label>
+              <input type="text" id="nombre" name="nombre" required>
+              
+              <label for="telefono">Teléfono</label>
+              <input type="text" id="telefono" name="telefono">
+              
+              <label for="email">Correo</label>
+              <input type="email" id="email" name="email">
+              
+              <label for="direccion">Dirección</label>
+              <input type="direccion" id="direccion" name="direccion"
+              
+              <label for="rfc">RFC</label>
+              <input type="text" id="rfc" name="rfc" placeholder="RFC de la empresa">
+              
+              <button type="submit" class="btn">Agregar</button>
+            </form>
+            <div id="mensajeAgregar" class="mensaje"></div>
           </div>
 
-          <!-- Editar clientes -->
+          <!-- Editar Empresa -->
           <div class="form-card">
             <h3>Editar Empresa</h3>
-            <label>Id Empresa</label>
-            <input type="text">
-            <label>Nombre</label>
-            <input type="text">
-            <label>RFC</label>
-            <input type="text">
-            <label>Direccion</label>
-            <input type="text">
-            <button class="btn">Actualizar</button>
+            <form id="formEditar" style="display: none;">
+              <input type="hidden" id="edit_id" name="id">
+              
+              <label for="edit_nombre">Nombre *</label>
+              <input type="text" id="edit_nombre" name="nombre" required>
+              
+              <label for="edit_telefono">Teléfono</label>
+              <input type="text" id="edit_telefono" name="telefono">
+              
+              <label for="edit_email">Correo</label>
+              <input type="email" id="edit_email" name="email">
+              
+              <label for="edit_direccion">Dirección</label>
+              <textarea id="edit_direccion" name="direccion" rows="3"></textarea>
+              
+              <label for="edit_rfc">RFC</label>
+              <input type="text" id="edit_rfc" name="rfc">
+              
+              <button type="submit" class="btn">Actualizar</button>
+              <button type="button" class="btn cancelar-btn" onclick="cancelarEdicion()">Cancelar</button>
+            </form>
+            <div id="mensajeEditar" class="mensaje"></div>
+            <p id="editar-placeholder" style="color: #666; font-style: italic; text-align: center;">
+              Selecciona una empresa para editarla
+            </p>
           </div>
         </section>
 
         <!-- Panel de resultados -->
         <section class="results">
           <div class="results-box">
-            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
-            <p class="placeholder">Aquí aparecerán las empresas registradas
+            <div class="results-header">
+              <h3>Lista de Empresas</h3>
+              <span id="totalEmpresas">0 empresas</span>
+            </div>
+            <div id="listaEmpresas" class="clientes-lista">
+              <p class="placeholder">Cargando empresas...</p>
+            </div>
           </div>
         </section>
       </div>
     </main>
   </div>
+
+  <script src="empresas.js"></script>
 </body>
 </html>

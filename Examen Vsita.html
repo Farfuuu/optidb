@@ -3,68 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial de Ventas</title>
-  <link rel="stylesheet" href="Ventas.css">
+  <title>Exámenes de Vista</title>
+  <link rel="stylesheet" href="Examen Vsita.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+  <?php 
+  session_start();
+  if (!isset($_SESSION['user_id'])) {
+      header('Location: index.html');
+      exit();
+  }
+  ?>
+  
   <div class="layout">
     <!-- Panel lateral -->
     <aside class="sidebar">
+      <button class="btn" onclick="location.href='Empresas.html'">Empresas</button>
       <button class="btn" onclick="location.href='clientes.html'">Clientes</button>
-      <button class="btn" onclick="location.href='Historial medico.html'">Historial medico</button>
-      <button class="btn" onclick="location.href='index.html'">Inicio</button>
+      <button class="btn" onclick="location.href='Ventas.html'">Ventas</button>
+      <button class="btn" onclick="location.href='Examen Vsita.html'">Examen Vista</button>
+      <button class="btn" onclick="location.href='Historial medico.html'">Historial médico</button>
+      <button class="btn logout-btn" onclick="location.href='logout.php'">Cerrar Sesión</button>
     </aside>
 
     <!-- Sección principal -->
     <main class="content">
+      <!-- Barra superior -->
+      <header class="topbar">
+        <h2>Exámenes de Vista</h2>
+        <div class="user-info">
+          <span>Bienvenido, <?php echo $_SESSION['nombre']; ?></span>
+        </div>
+        <div class="search-area">
+          <label for="buscar">Buscar</label>
+          <input type="text" id="buscar" placeholder="Escribe un nombre o ID...">
+          <button class="btn small" onclick="buscarExamenes()">Buscar</button>
+          <button class="btn small" onclick="mostrarTodo()">Mostrar todo</button>
+        </div>
+      </header>
 
       <!-- Cuerpo principal -->
       <div class="main-section">
-        <!-- Formulario lateral -->
-        <section class="forms-row">
-          <!-- Agregar Ventas -->
+        <!-- Formularios -->
+        <section class="forms">
+          <!-- Agregar Examen -->
           <div class="form-card">
             <h3>Agregar Examen</h3>
-            <label>Id Examen</label>
-            <input type="text">
-            <label>Nombre</label>
-            <input type="text">
-            <label>Fecha del Examen</label>
-            <input type="date">
-            <label>Graduación ojo Izquierdo</label>
-            <input type="text">
-            <label>Graduación ojo Derecho</label>
-            <input type="text">
-            <button class="btn">Agregar</button>
+            <form id="formAgregar">
+              <label for="id_examen">ID Examen</label>
+              <input type="text" id="id_examen" name="id_examen">
+              
+              <label for="nombre_paciente">Nombre del Paciente *</label>
+              <input type="text" id="nombre_paciente" name="nombre_paciente" required>
+              
+              <label for="fecha_examen">Fecha del Examen *</label>
+              <input type="date" id="fecha_examen" name="fecha_examen" required>
+              
+              <label for="graduacion_oi">Graduación Ojo Izquierdo</label>
+              <input type="text" id="graduacion_oi" name="graduacion_oi" placeholder="Ej: -2.50">
+              
+              <label for="graduacion_od">Graduación Ojo Derecho</label>
+              <input type="text" id="graduacion_od" name="graduacion_od" placeholder="Ej: -2.25">
+              
+              <button type="submit" class="btn">Agregar</button>
+            </form>
+            <div id="mensajeAgregar" class="mensaje"></div>
           </div>
 
-          <!-- Editar clientes -->
+          <!-- Editar Examen -->
           <div class="form-card">
             <h3>Editar Examen</h3>
-            <label>Id del Examen</label>
-            <input type="text">
-            <label>Nombre</label>
-            <input type="text">
-            <label>Fecha del Examen</label>
-            <input type="date">
-            <label>Graduación ojo Izquierdo</label>
-            <input type="text">
-            <label>Graduación ojo Derecho</label>
-            <input type="text">
-            <button class="btn">Actualizar</button>
+            <form id="formEditar" style="display: none;">
+              <input type="hidden" id="edit_id" name="id">
+              
+              <label for="edit_id_examen">ID Examen</label>
+              <input type="text" id="edit_id_examen" name="id_examen">
+              
+              <label for="edit_nombre_paciente">Nombre del Paciente *</label>
+              <input type="text" id="edit_nombre_paciente" name="nombre_paciente" required>
+              
+              <label for="edit_fecha_examen">Fecha del Examen *</label>
+              <input type="date" id="edit_fecha_examen" name="fecha_examen" required>
+              
+              <label for="edit_graduacion_oi">Graduación Ojo Izquierdo</label>
+              <input type="text" id="edit_graduacion_oi" name="graduacion_oi">
+              
+              <label for="edit_graduacion_od">Graduación Ojo Derecho</label>
+              <input type="text" id="edit_graduacion_od" name="graduacion_od">
+              
+              <button type="submit" class="btn">Actualizar</button>
+              <button type="button" class="btn cancelar-btn" onclick="cancelarEdicion()">Cancelar</button>
+            </form>
+            <div id="mensajeEditar" class="mensaje"></div>
+            <p id="editar-placeholder" style="color: #666; font-style: italic; text-align: center;">
+              Selecciona un examen para editarlo
+            </p>
           </div>
         </section>
 
         <!-- Panel de resultados -->
         <section class="results">
           <div class="results-box">
-            <!-- Aquí se mostrarán los clientes (tabla o tarjetas) -->
-            <p class="placeholder">Aquí aparecerán Los examenes de vista registrados ...</p>
+            <div class="results-header">
+              <h3>Lista de Exámenes</h3>
+              <span id="totalExamenes">0 exámenes</span>
+            </div>
+            <div id="listaExamenes" class="examenes-lista">
+              <p class="placeholder">Cargando exámenes...</p>
+            </div>
           </div>
         </section>
       </div>
     </main>
   </div>
+
+  <script src="examenes.js"></script>
 </body>
 </html>
