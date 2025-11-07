@@ -37,6 +37,18 @@
   </div>
 
   <script>
+    // Prevenir que se pueda volver atrás al historial
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function(event) {
+            window.history.go(1);
+        };
+    }
+
+    // Limpiar cualquier sesión residual del localStorage/sessionStorage
+    localStorage.removeItem('user_session');
+    sessionStorage.removeItem('user_session');
+
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -56,16 +68,20 @@
       // Enviar datos mediante AJAX
       fetch('login.php', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
       })
       .then(response => response.json())
       .then(data => {
         if (data.success) {
           messageDiv.textContent = data.message;
           messageDiv.className = 'message success';
-          // Redirigir después de 1 segundo
+          
+          // Usar replace para evitar que quede en el historial
           setTimeout(() => {
-            window.location.href = data.redirect;
+            window.location.replace(data.redirect);
           }, 1000);
         } else {
           messageDiv.textContent = data.message;
@@ -77,6 +93,13 @@
         messageDiv.className = 'message error';
       });
     });
+
+    // Prevenir el uso de cache
+    window.onpageshow = function(event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
   </script>
 </body>
 </html>

@@ -1,3 +1,37 @@
+// Protección contra navegación hacia atrás
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = function(event) {
+    window.history.go(1);
+};
+
+// Prevenir cache
+window.onpageshow = function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+};
+
+// Verificar inactividad (30 minutos)
+let inactivityTime = function() {
+    let time;
+    
+    function logout() {
+        window.location.replace('logout.php');
+    }
+    
+    function resetTimer() {
+        clearTimeout(time);
+        time = setTimeout(logout, 30 * 60 * 1000); // 30 minutos
+    }
+
+    // Eventos para resetear el timer
+    window.addEventListener('load', resetTimer);
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('keypress', resetTimer);
+};
+
+inactivityTime();
+
 // Cargar ventas al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarVentas();
@@ -17,7 +51,81 @@ document.addEventListener('DOMContentLoaded', function() {
     // Establecer fecha actual por defecto
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('fecha_venta').value = today;
+    
+    // Agregar event listener para Enter en el campo de búsqueda
+    document.getElementById('buscar').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarVentas();
+        }
+    });
 });
+
+// Sistema de notificaciones Toast
+function showToast(message, type = 'info', duration = 5000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <p class="toast-message">${message}</p>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    if (duration > 0) {
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.classList.add('hide');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }, duration);
+    }
+    
+    return toast;
+}
+
+// Función para confirmación con Toast
+function confirmWithToast(question) {
+    return new Promise((resolve) => {
+        const toast = showToast(`
+            <div style="text-align: center;">
+                <p style="margin-bottom: 15px; color: #333;">${question}</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="handleConfirm(true, this)" class="btn-editar" style="padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer;">Sí</button>
+                    <button onclick="handleConfirm(false, this)" class="btn-eliminar" style="padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer;">No</button>
+                </div>
+            </div>
+        `, 'warning', 0);
+        
+        window.handleConfirm = (result, button) => {
+            toast.remove();
+            resolve(result);
+        };
+    });
+}
 
 function cargarVentas() {
     const formData = new FormData();
@@ -33,12 +141,12 @@ function cargarVentas() {
             mostrarVentas(data.ventas);
         } else {
             console.error('Error:', data.message);
-            alert('Error al cargar ventas: ' + data.message);
+            showToast('Error al cargar ventas: ' + data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error de conexión al cargar ventas');
+        showToast('Error de conexión al cargar ventas', 'error');
     });
 }
 
@@ -103,15 +211,18 @@ function agregarVenta() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('fecha_venta').value = today;
             
-            cargarVentas(); // Recargar la lista
+            cargarVentas();
+            showToast(data.message, 'success');
         } else {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje error';
+            showToast(data.message, 'error');
         }
     })
     .catch(error => {
         mensaje.textContent = 'Error de conexión: ' + error;
         mensaje.className = 'mensaje error';
+        showToast('Error de conexión: ' + error, 'error');
     })
     .finally(() => {
         setTimeout(() => {
@@ -121,7 +232,6 @@ function agregarVenta() {
 }
 
 function editarVentaForm(id) {
-    // Obtener los datos actuales de la venta
     const ventaItem = document.querySelector(`.venta-item[data-id="${id}"]`);
     const nombre = ventaItem.querySelector('h4').textContent;
     const fechaTexto = ventaItem.querySelector('p:nth-child(2)').textContent.replace('📅 Fecha: ', '');
@@ -135,14 +245,12 @@ function editarVentaForm(id) {
     // Convertir total a número (eliminar símbolos de moneda)
     const totalNumero = totalTexto.replace(/[^\d.,]/g, '').replace(',', '');
     
-    // Rellenar formulario de edición
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_nombre_cliente').value = nombre;
     document.getElementById('edit_fecha_venta').value = fechaFormateada;
     document.getElementById('edit_total').value = totalNumero;
     document.getElementById('edit_tipo_armazon').value = armazon === 'N/A' ? '' : armazon;
     
-    // Mostrar formulario de edición
     document.getElementById('formEditar').style.display = 'block';
     document.getElementById('mensajeEditar').style.display = 'none';
 }
@@ -167,15 +275,18 @@ function editarVenta() {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje success';
             document.getElementById('formEditar').style.display = 'none';
-            cargarVentas(); // Recargar la lista
+            cargarVentas();
+            showToast(data.message, 'success');
         } else {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje error';
+            showToast(data.message, 'error');
         }
     })
     .catch(error => {
         mensaje.textContent = 'Error de conexión: ' + error;
         mensaje.className = 'mensaje error';
+        showToast('Error de conexión: ' + error, 'error');
     })
     .finally(() => {
         setTimeout(() => {
@@ -189,8 +300,10 @@ function cancelarEdicion() {
     document.getElementById('mensajeEditar').style.display = 'none';
 }
 
-function eliminarVenta(id) {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta venta?')) {
+async function eliminarVenta(id) {
+    const confirmacion = await confirmWithToast('¿Estás seguro de que quieres eliminar esta venta?');
+    
+    if (!confirmacion) {
         return;
     }
     
@@ -205,14 +318,14 @@ function eliminarVenta(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert(data.message);
+            showToast(data.message, 'success');
             cargarVentas();
         } else {
-            alert('Error: ' + data.message);
+            showToast('Error: ' + data.message, 'error');
         }
     })
     .catch(error => {
-        alert('Error de conexión: ' + error);
+        showToast('Error de conexión: ' + error, 'error');
     });
 }
 
@@ -231,14 +344,17 @@ function buscarVentas() {
     .then(data => {
         if (data.success) {
             mostrarVentas(data.ventas);
+            if (termino) {
+                showToast(`Se encontraron ${data.ventas.length} ventas`, 'info', 2000);
+            }
         } else {
             console.error('Error:', data.message);
-            alert('Error al buscar ventas: ' + data.message);
+            showToast('Error al buscar ventas: ' + data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error de conexión al buscar ventas');
+        showToast('Error de conexión al buscar ventas', 'error');
     });
 }
 

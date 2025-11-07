@@ -241,7 +241,8 @@ body {
   font-weight: 500;
 }
 
-.empresas-lista {
+/* ===== LISTA DE EMPRESAS - CORREGIDO ===== */
+.clientes-lista {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -249,25 +250,26 @@ body {
 }
 
 /* Estilos para la barra de scroll */
-.empresas-lista::-webkit-scrollbar {
+.clientes-lista::-webkit-scrollbar {
   width: 8px;
 }
 
-.empresas-lista::-webkit-scrollbar-track {
+.clientes-lista::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 10px;
 }
 
-.empresas-lista::-webkit-scrollbar-thumb {
+.clientes-lista::-webkit-scrollbar-thumb {
   background: #654ea3;
   border-radius: 10px;
 }
 
-.empresas-lista::-webkit-scrollbar-thumb:hover {
+.clientes-lista::-webkit-scrollbar-thumb:hover {
   background: #7b5dc6;
 }
 
-.empresa-item {
+/* ESTILOS CORREGIDOS PARA LOS ITEMS DE EMPRESAS */
+.cliente-item {
   background: white;
   border-radius: 10px;
   padding: 15px;
@@ -275,27 +277,43 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   flex-shrink: 0;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
 }
 
-.empresa-info h4 {
+.cliente-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.cliente-info {
+  flex: 1;
+}
+
+.cliente-info h4 {
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.empresa-info p {
+.cliente-info p {
   color: #666;
   font-size: 14px;
-  margin: 2px 0;
+  margin: 4px 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  line-height: 1.4;
 }
 
-.empresa-acciones {
+.cliente-acciones {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 15px;
 }
 
 .btn-editar, .btn-eliminar {
@@ -305,6 +323,7 @@ body {
   cursor: pointer;
   font-size: 13px;
   transition: all 0.3s;
+  font-weight: 500;
 }
 
 .btn-editar {
@@ -314,6 +333,7 @@ body {
 
 .btn-editar:hover {
   background-color: #218838;
+  transform: translateY(-1px);
 }
 
 .btn-eliminar {
@@ -323,6 +343,7 @@ body {
 
 .btn-eliminar:hover {
   background-color: #c82333;
+  transform: translateY(-1px);
 }
 
 /* ===== MENSAJES ===== */
@@ -356,6 +377,131 @@ body {
   display: block;
 }
 
+/* ===== NOTIFICACIONES TOAST ===== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background: white;
+  border-radius: 8px;
+  padding: 15px 20px;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid #654ea3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: slideIn 0.3s ease-out;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast.hide {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+.toast.success {
+  border-left-color: #28a745;
+}
+
+.toast.error {
+  border-left-color: #dc3545;
+}
+
+.toast.warning {
+  border-left-color: #ffc107;
+}
+
+.toast.info {
+  border-left-color: #17a2b8;
+}
+
+.toast-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-icon {
+  font-size: 18px;
+}
+
+.toast-message {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.toast-close:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Toast para móviles */
+@media (max-width: 768px) {
+  .toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+  
+  .toast {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
 /* ===== RESPONSIVIDAD ===== */
 @media (max-width: 1024px) {
   .main-section {
@@ -371,7 +517,7 @@ body {
     flex: 1;
   }
   
-  .empresas-lista {
+  .clientes-lista {
     max-height: 400px;
   }
 }
@@ -418,8 +564,19 @@ body {
     flex-direction: column;
   }
   
-  .empresas-lista {
+  .clientes-lista {
     max-height: 300px;
+  }
+  
+  .cliente-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .cliente-acciones {
+    margin-left: 0;
+    margin-top: 10px;
+    justify-content: flex-end;
   }
 }
 
@@ -436,6 +593,52 @@ body {
 }
 
 /* Asegurar que los iconos en la lista de empresas se vean bien */
-.empresa-info p::before {
+.cliente-info p::before {
   margin-right: 5px;
+}
+
+/* Estilos para botones en confirmaciones toast */
+.toast-confirm-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.toast-confirm-button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.toast-confirm-button.confirm {
+  background-color: #28a745;
+  color: white;
+}
+
+.toast-confirm-button.confirm:hover {
+  background-color: #218838;
+}
+
+.toast-confirm-button.cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.toast-confirm-button.cancel:hover {
+  background-color: #c82333;
+}
+
+/* Placeholder cuando no hay empresas */
+.placeholder {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  margin: 20px 0;
 }

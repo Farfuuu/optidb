@@ -6,11 +6,12 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
+// Verificar si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
     // Destruir sesión por seguridad
     session_destroy();
     
-    // Redirigir con método que evita historial
+    // Redirigir al login con método que evita historial
     echo '<script>
         window.history.replaceState(null, null, window.location.href);
         window.location.replace("index.html");
@@ -18,8 +19,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Verificar inactividad
-$inactivity_time = 30 * 60; // 30 minutos
+// Verificar inactividad (30 minutos)
+$inactivity_time = 30 * 60; // 30 minutos en segundos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactivity_time)) {
     session_destroy();
     echo '<script>
@@ -29,6 +30,14 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
     exit();
 }
 
-// Actualizar tiempo de actividad
+// Actualizar tiempo de última actividad
 $_SESSION['last_activity'] = time();
+
+// Regenerar ID de sesión periódicamente para seguridad
+if (!isset($_SESSION['created'])) {
+    $_SESSION['created'] = time();
+} else if (time() - $_SESSION['created'] > 1800) { // 30 minutos
+    session_regenerate_id(true);
+    $_SESSION['created'] = time();
+}
 ?>

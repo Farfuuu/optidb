@@ -1,3 +1,37 @@
+// Protección contra navegación hacia atrás
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = function(event) {
+    window.history.go(1);
+};
+
+// Prevenir cache
+window.onpageshow = function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+};
+
+// Verificar inactividad (30 minutos)
+let inactivityTime = function() {
+    let time;
+    
+    function logout() {
+        window.location.replace('logout.php');
+    }
+    
+    function resetTimer() {
+        clearTimeout(time);
+        time = setTimeout(logout, 30 * 60 * 1000); // 30 minutos
+    }
+
+    // Eventos para resetear el timer
+    window.addEventListener('load', resetTimer);
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('keypress', resetTimer);
+};
+
+inactivityTime();
+
 // Cargar historiales al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarHistoriales();
@@ -17,7 +51,81 @@ document.addEventListener('DOMContentLoaded', function() {
     // Establecer fecha actual por defecto
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('fecha_historial').value = today;
+    
+    // Agregar event listener para Enter en el campo de búsqueda
+    document.getElementById('buscar').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            buscarHistoriales();
+        }
+    });
 });
+
+// Sistema de notificaciones Toast
+function showToast(message, type = 'info', duration = 5000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <p class="toast-message">${message}</p>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    if (duration > 0) {
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.classList.add('hide');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }, duration);
+    }
+    
+    return toast;
+}
+
+// Función para confirmación con Toast
+function confirmWithToast(question) {
+    return new Promise((resolve) => {
+        const toast = showToast(`
+            <div style="text-align: center;">
+                <p style="margin-bottom: 15px; color: #333;">${question}</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="handleConfirm(true, this)" class="btn-editar" style="padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer;">Sí</button>
+                    <button onclick="handleConfirm(false, this)" class="btn-eliminar" style="padding: 8px 20px; border: none; border-radius: 5px; cursor: pointer;">No</button>
+                </div>
+            </div>
+        `, 'warning', 0);
+        
+        window.handleConfirm = (result, button) => {
+            toast.remove();
+            resolve(result);
+        };
+    });
+}
 
 function cargarHistoriales() {
     const formData = new FormData();
@@ -33,12 +141,12 @@ function cargarHistoriales() {
             mostrarHistoriales(data.historiales);
         } else {
             console.error('Error:', data.message);
-            alert('Error al cargar historiales: ' + data.message);
+            showToast('Error al cargar historiales: ' + data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error de conexión al cargar historiales');
+        showToast('Error de conexión al cargar historiales', 'error');
     });
 }
 
@@ -107,15 +215,18 @@ function agregarHistorial() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('fecha_historial').value = today;
             
-            cargarHistoriales(); // Recargar la lista
+            cargarHistoriales();
+            showToast(data.message, 'success');
         } else {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje error';
+            showToast(data.message, 'error');
         }
     })
     .catch(error => {
         mensaje.textContent = 'Error de conexión: ' + error;
         mensaje.className = 'mensaje error';
+        showToast('Error de conexión: ' + error, 'error');
     })
     .finally(() => {
         setTimeout(() => {
@@ -125,7 +236,6 @@ function agregarHistorial() {
 }
 
 function editarHistorialForm(id) {
-    // Obtener los datos actuales del historial
     const historialItem = document.querySelector(`.historial-item[data-id="${id}"]`);
     const nombre = historialItem.querySelector('h4').textContent;
     const idHistorial = historialItem.querySelector('p:nth-child(2)').textContent.replace('📋 ID: ', '');
@@ -137,7 +247,6 @@ function editarHistorialForm(id) {
     const [dia, mes, anio] = fechaTexto.split('/');
     const fechaFormateada = `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
     
-    // Rellenar formulario de edición
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_id_historial').value = idHistorial === 'N/A' ? '' : idHistorial;
     document.getElementById('edit_nombre_paciente').value = nombre;
@@ -145,7 +254,6 @@ function editarHistorialForm(id) {
     document.getElementById('edit_descripcion').value = descripcion === 'Sin descripción' ? '' : descripcion;
     document.getElementById('edit_cirugias_previas').value = cirugias === 'Ninguna' ? '' : cirugias;
     
-    // Mostrar formulario de edición
     document.getElementById('formEditar').style.display = 'block';
     document.getElementById('mensajeEditar').style.display = 'none';
 }
@@ -170,15 +278,18 @@ function editarHistorial() {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje success';
             document.getElementById('formEditar').style.display = 'none';
-            cargarHistoriales(); // Recargar la lista
+            cargarHistoriales();
+            showToast(data.message, 'success');
         } else {
             mensaje.textContent = data.message;
             mensaje.className = 'mensaje error';
+            showToast(data.message, 'error');
         }
     })
     .catch(error => {
         mensaje.textContent = 'Error de conexión: ' + error;
         mensaje.className = 'mensaje error';
+        showToast('Error de conexión: ' + error, 'error');
     })
     .finally(() => {
         setTimeout(() => {
@@ -192,8 +303,10 @@ function cancelarEdicion() {
     document.getElementById('mensajeEditar').style.display = 'none';
 }
 
-function eliminarHistorial(id) {
-    if (!confirm('¿Estás seguro de que quieres eliminar este historial?')) {
+async function eliminarHistorial(id) {
+    const confirmacion = await confirmWithToast('¿Estás seguro de que quieres eliminar este historial?');
+    
+    if (!confirmacion) {
         return;
     }
     
@@ -208,14 +321,14 @@ function eliminarHistorial(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert(data.message);
+            showToast(data.message, 'success');
             cargarHistoriales();
         } else {
-            alert('Error: ' + data.message);
+            showToast('Error: ' + data.message, 'error');
         }
     })
     .catch(error => {
-        alert('Error de conexión: ' + error);
+        showToast('Error de conexión: ' + error, 'error');
     });
 }
 
@@ -234,14 +347,17 @@ function buscarHistoriales() {
     .then(data => {
         if (data.success) {
             mostrarHistoriales(data.historiales);
+            if (termino) {
+                showToast(`Se encontraron ${data.historiales.length} historiales`, 'info', 2000);
+            }
         } else {
             console.error('Error:', data.message);
-            alert('Error al buscar historiales: ' + data.message);
+            showToast('Error al buscar historiales: ' + data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error de conexión al buscar historiales');
+        showToast('Error de conexión al buscar historiales', 'error');
     });
 }
 

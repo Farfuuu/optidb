@@ -9,11 +9,7 @@
 </head>
 <body>
   <?php 
-  session_start();
-  if (!isset($_SESSION['user_id'])) {
-      header('Location: index.html');
-      exit();
-  }
+  require_once 'session_protection.php';
   ?>
   
   <div class="layout">
@@ -37,7 +33,7 @@
         </div>
         <div class="search-area">
           <label for="buscar">Buscar</label>
-          <input type="text" id="buscar" placeholder="Escribe un nombre...">
+          <input type="text" id="buscar" placeholder="Escribe un nombre y presiona Enter...">
           <button class="btn small" onclick="buscarVentas()">Buscar</button>
           <button class="btn small" onclick="mostrarTodo()">Mostrar todo</button>
         </div>

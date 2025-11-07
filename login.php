@@ -2,6 +2,11 @@
 session_start();
 require_once 'conexion.php';
 
+// Headers para evitar cache
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = trim($_POST['usuario']);
     $password = $_POST['password'];
@@ -16,10 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (password_verify($password, $user['password'])) {
+                // Regenerar ID de sesión para mayor seguridad
+                session_regenerate_id(true);
+                
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['usuario'] = $user['usuario'];
                 $_SESSION['nombre'] = $user['nombre'];
                 $_SESSION['rol'] = $user['rol'];
+                $_SESSION['last_activity'] = time();
                 
                 echo json_encode(['success' => true, 'message' => 'Login exitoso', 'redirect' => 'clientes.html']);
             } else {
