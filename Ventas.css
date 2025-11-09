@@ -525,3 +525,226 @@ body {
         width: 100%;
     }
 }
+
+/* ===== DISEÑO VERTICAL ESTRICTO PARA MÓVILES - LISTA AL FINAL ===== */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    gap: 8px;
+    order: 1;
+    min-height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #f3d3e0;
+    padding-top: 10px;
+  }
+  
+  .btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    min-width: 120px;
+    margin: 2px;
+    width: auto;
+    flex: 1;
+    max-width: 150px;
+  }
+  
+  .logout-btn {
+    margin-top: 0;
+    margin-bottom: 0;
+    order: 999;
+  }
+  
+  .content {
+    order: 2;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 80px);
+  }
+  
+  .topbar {
+    order: 1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .topbar h2 {
+    font-size: 20px;
+    text-align: center;
+  }
+  
+  .user-info {
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .search-area {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .search-area input {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .search-area .btn.small {
+    width: 100%;
+    margin: 2px 0;
+  }
+  
+  .main-section {
+    order: 2;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    display: flex;
+  }
+  
+  .forms {
+    order: 1;
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
+    flex: 0 0 auto;
+  }
+  
+  .form-card {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  .results {
+    order: 2;
+    flex: 1;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .results-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+  }
+  
+  .ventas-lista {
+    flex: 1;
+    overflow-y: auto;
+    max-height: none !important;
+    height: auto !important;
+    min-height: 300px;
+  }
+  
+  .venta-item {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+  }
+  
+  .venta-acciones {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .btn-editar, 
+  .btn-eliminar {
+    padding: 10px 15px;
+    font-size: 14px;
+    flex: 1;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    gap: 5px;
+    padding: 8px;
+  }
+  
+  .btn {
+    padding: 10px 12px;
+    font-size: 12px;
+    min-width: 100px;
+    max-width: 130px;
+  }
+  
+  .topbar h2 {
+    font-size: 18px;
+  }
+  
+  .form-card {
+    padding: 15px;
+  }
+  
+  .form-card h3 {
+    font-size: 16px;
+  }
+  
+  .results-header h3 {
+    font-size: 16px;
+  }
+  
+  .results {
+    min-height: 350px;
+  }
+  
+  .ventas-lista {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .sidebar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 8px;
+  }
+  
+  .btn {
+    flex: 0 0 auto;
+    min-width: 140px;
+  }
+  
+  .forms {
+    flex-direction: row;
+    gap: 15px;
+  }
+  
+  .form-card {
+    flex: 1;
+  }
+  
+  .results {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    height: auto;
+  }
+  
+  .content {
+    overflow-y: visible;
+  }
+}

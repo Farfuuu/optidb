@@ -298,3 +298,35 @@ input:focus {
         width: 100%;
     }
 }
+
+/* MEJORAS PARA MÓVILES EN LOGIN */
+@media (max-width: 480px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    padding: 20px 15px;
+    height: auto;
+  }
+  
+  .sidebar-content h2 {
+    font-size: 20px;
+  }
+  
+  .login-box {
+    width: 95%;
+    padding: 30px 20px;
+    margin: 10px auto;
+  }
+  
+  input {
+    padding: 14px 12px;
+    font-size: 16px; /* Mejor para iOS */
+  }
+  
+  .btn-login {
+    padding: 14px;
+    font-size: 16px;
+  }
+}
