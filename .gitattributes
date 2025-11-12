@@ -1,8 +1,5 @@
-# 1. Asegura que los archivos PHP sean contados como PHP (incluso si tienen mucho HTML)
-*.php linguist-language=PHP
 
-# 2. Ignora el CSS y el HTML para el cálculo de lenguaje
-# Esto es crucial para que PHP y JS puedan subir de porcentaje.
+*.php linguist-language=PHP
 *.css linguist-language=CSS
 *.html linguist-language=HTML
 *.js linguist-language=JS
