@@ -32,9 +32,70 @@ let inactivityTime = function() {
 
 inactivityTime();
 
+// Función para mostrar/ocultar campo de empresa según tipo de cliente
+function toggleEmpresaField(value, isEdit = false) {
+    const fieldId = isEdit ? 'edit_empresaField' : 'empresaField';
+    const inputId = isEdit ? 'edit_empresa_nombre' : 'empresa_nombre';
+    
+    const empresaField = document.getElementById(fieldId);
+    const empresaNombreInput = document.getElementById(inputId);
+    
+    if (value === 'Corporativo') {
+        empresaField.style.display = 'block';
+        empresaNombreInput.required = true;
+    } else {
+        empresaField.style.display = 'none';
+        empresaNombreInput.required = false;
+        empresaNombreInput.value = '';
+    }
+}
+
+// Obtener lista de empresas y poblar los selects
+function fetchAndPopulateEmpresas() {
+    const formData = new FormData();
+    formData.append('action', 'obtener');
+
+    fetch('empresas_ajax.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            console.warn('No se pudieron cargar empresas:', data.message);
+            return;
+        }
+
+        const empresas = data.empresas || [];
+        const selectIds = ['empresa_nombre', 'edit_empresa_nombre'];
+
+        selectIds.forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+
+            // Mantener el placeholder
+            sel.innerHTML = '<option value="">-- Selecciona empresa --</option>';
+            empresas.forEach(emp => {
+                const opt = document.createElement('option');
+                opt.value = emp.nombre;
+                opt.textContent = emp.nombre;
+                sel.appendChild(opt);
+            });
+        });
+    })
+    .catch(err => {
+        console.error('Error al cargar empresas:', err);
+    });
+}
 // Cargar clientes al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarClientes();
+
+    // Poblar selects de empresas y luego inicializar visibilidad
+    fetchAndPopulateEmpresas();
+    // Inicializar el campo de empresa (usar el valor actual si existe)
+    const tipoSelect = document.getElementById('tipo_cliente');
+    if (tipoSelect) toggleEmpresaField(tipoSelect.value);
     
     // Manejar formulario de agregar
     document.getElementById('formAgregar').addEventListener('submit', function(e) {
@@ -206,6 +267,11 @@ function mostrarClientes(clientes) {
     }
     
     clientes.forEach(cliente => {
+        let empresaHTML = '';
+        if (cliente.empresa_nombre) {
+            empresaHTML = `<p>🏢 ${cliente.empresa_nombre}</p>`;
+        }
+        
         const clienteHTML = `
             <div class="cliente-item" data-id="${cliente.id}">
                 <div class="cliente-info">
@@ -213,6 +279,7 @@ function mostrarClientes(clientes) {
                     <p>📞 ${cliente.telefono || 'No especificado'}</p>
                     <p>📧 ${cliente.email || 'No especificado'}</p>
                     <p>🏷️ ${cliente.tipo_cliente || 'Regular'}</p>
+                    ${empresaHTML}
                 </div>
                 <div class="cliente-acciones">
                     <button class="btn-editar" onclick="editarClienteForm(${cliente.id})">Editar</button>
@@ -271,6 +338,13 @@ function editarClienteForm(id) {
     const email = clienteItem.querySelector('p:nth-child(3)').textContent.replace('📧 ', '');
     const tipo_cliente = clienteItem.querySelector('p:nth-child(4)').textContent.replace('🏷️ ', '');
     
+    // Buscar el elemento de empresa si existe
+    let empresa = '';
+    const empresaElement = clienteItem.querySelector('p:nth-child(5)');
+    if (empresaElement && empresaElement.textContent.startsWith('🏢')) {
+        empresa = empresaElement.textContent.replace('🏢 ', '');
+    }
+    
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_nombre').value = nombre;
     
@@ -280,6 +354,10 @@ function editarClienteForm(id) {
     
     document.getElementById('edit_email').value = email === 'No especificado' ? '' : email;
     document.getElementById('edit_tipo_cliente').value = tipo_cliente;
+    document.getElementById('edit_empresa_nombre').value = empresa === 'No especificado' ? '' : empresa;
+    
+    // Mostrar u ocultar el campo de empresa según el tipo
+    toggleEmpresaField(tipo_cliente, true);
     
     document.getElementById('formEditar').style.display = 'block';
     document.getElementById('mensajeEditar').style.display = 'none';

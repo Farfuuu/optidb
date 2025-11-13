@@ -43,8 +43,8 @@
       <div class="main-section">
         <!-- Formularios -->
         <section class="forms">
-          <!-- Agregar clientes -->
-          <div class="form-card">
+            <!-- Agregar clientes -->
+            <div class="form-card">
             <h3>Agregar clientes</h3>
             <form id="formAgregar">
               <label for="nombre">Nombre *</label>
@@ -57,11 +57,17 @@
               <input type="email" id="email" name="email">
               
               <label for="tipo_cliente">Tipo de cliente</label>
-              <select id="tipo_cliente" name="tipo_cliente">
-                <option value="Regular">Regular</option>
-                <option value="VIP">VIP</option>
-                <option value="Corporativo">Corporativo</option>
+              <select id="tipo_cliente" name="tipo_cliente" onchange="toggleEmpresaField(this.value)">
+              <option value="Regular">Regular</option>
+              <option value="Corporativo">Corporativo</option>
               </select>
+              
+              <div id="empresaField" style="display:none; margin-top:8px;">
+              <label for="empresa_nombre">Nombre de la empresa *</label>
+              <select id="empresa_nombre" name="empresa_nombre">
+                <option value="">-- Selecciona empresa --</option>
+              </select>
+              </div>
               
               <button type="submit" class="btn">Agregar</button>
             </form>
@@ -84,11 +90,18 @@
               <input type="email" id="edit_email" name="email">
               
               <label for="edit_tipo_cliente">Tipo de cliente</label>
-              <select id="edit_tipo_cliente" name="tipo_cliente">
+              <select id="edit_tipo_cliente" name="tipo_cliente" onchange="toggleEmpresaField(this.value, true)">
                 <option value="Regular">Regular</option>
                 <option value="VIP">VIP</option>
                 <option value="Corporativo">Corporativo</option>
               </select>
+              
+              <div id="edit_empresaField" style="display:none; margin-top:8px;">
+              <label for="edit_empresa_nombre">Nombre de la empresa *</label>
+              <select id="edit_empresa_nombre" name="empresa_nombre">
+                <option value="">-- Selecciona empresa --</option>
+              </select>
+              </div>
               
               <button type="submit" class="btn">Actualizar</button>
               <button type="button" class="btn cancelar-btn" onclick="cancelarEdicion()">Cancelar</button>

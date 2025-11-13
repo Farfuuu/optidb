@@ -66,10 +66,24 @@ function agregarCliente() {
 function obtenerClientes() {
     global $conexion;
     
-    $sql = "SELECT * FROM clientes ORDER BY fecha_creacion DESC";
+    $sql = "SELECT c.* FROM clientes c ORDER BY c.fecha_creacion DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Obtener nombre de empresa para cada cliente si existe
+    foreach ($clientes as &$cliente) {
+        $cliente['empresa_nombre'] = '';
+        if (!empty($cliente['empresa_id'])) {
+            $sqlEmpresa = "SELECT nombre FROM empresas WHERE id = :id LIMIT 1";
+            $stmtEmpresa = $conexion->prepare($sqlEmpresa);
+            $stmtEmpresa->execute([':id' => $cliente['empresa_id']]);
+            $empresa = $stmtEmpresa->fetch(PDO::FETCH_ASSOC);
+            if ($empresa) {
+                $cliente['empresa_nombre'] = $empresa['nombre'];
+            }
+        }
+    }
     
     echo json_encode(['success' => true, 'clientes' => $clientes]);
 }
@@ -120,10 +134,24 @@ function buscarClientes() {
     
     $termino = $_POST['termino'] ?? '';
     
-    $sql = "SELECT * FROM clientes WHERE nombre LIKE :termino ORDER BY fecha_creacion DESC";
+    $sql = "SELECT c.* FROM clientes c WHERE c.nombre LIKE :termino ORDER BY c.fecha_creacion DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute([':termino' => "%$termino%"]);
     $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Obtener nombre de empresa para cada cliente si existe
+    foreach ($clientes as &$cliente) {
+        $cliente['empresa_nombre'] = '';
+        if (!empty($cliente['empresa_id'])) {
+            $sqlEmpresa = "SELECT nombre FROM empresas WHERE id = :id LIMIT 1";
+            $stmtEmpresa = $conexion->prepare($sqlEmpresa);
+            $stmtEmpresa->execute([':id' => $cliente['empresa_id']]);
+            $empresa = $stmtEmpresa->fetch(PDO::FETCH_ASSOC);
+            if ($empresa) {
+                $cliente['empresa_nombre'] = $empresa['nombre'];
+            }
+        }
+    }
     
     echo json_encode(['success' => true, 'clientes' => $clientes]);
 }
