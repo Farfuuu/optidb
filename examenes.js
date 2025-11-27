@@ -170,9 +170,9 @@ function mostrarExamenes(examenes) {
             <div class="examen-item" data-id="${examen.id}">
                 <div class="examen-info">
                     <h4>${examen.nombre_paciente}</h4>
-                    <p>📋 ID: ${examen.id_examen || 'N/A'}</p>
-                    <p>📅 Fecha: ${fechaFormateada}</p>
-                    <p>👁️ OI: ${examen.graduacion_oi || 'N/A'} | OD: ${examen.graduacion_od || 'N/A'}</p>
+                    <p> ID: ${examen.id_examen || 'N/A'}</p>
+                    <p> Fecha: ${fechaFormateada}</p>
+                    <p> OI: ${examen.graduacion_oi || 'N/A'} | OD: ${examen.graduacion_od || 'N/A'}</p>
                 </div>
                 <div class="examen-acciones">
                     <button class="btn-editar" onclick="editarExamenForm(${examen.id})">Editar</button>
