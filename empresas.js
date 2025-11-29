@@ -215,10 +215,10 @@ function mostrarEmpresas(empresas) {
             <div class="cliente-item" data-id="${empresa.id}">
                 <div class="cliente-info">
                     <h4>${empresa.nombre}</h4>
-                    <p>📞 ${empresa.telefono || 'N/A'}</p>
-                    <p>📧 ${empresa.email || 'N/A'}</p>
-                    <p>🏢 ${empresa.direccion || 'N/A'}</p>
-                    <p>📋 RFC: ${empresa.rfc || 'N/A'}</p>
+                    <p>Teléfono: ${empresa.telefono || 'N/A'}</p>
+                    <p>Correo: ${empresa.email || 'N/A'}</p>
+                    <p>Dirección: ${empresa.direccion || 'N/A'}</p>
+                    <p>RFC: ${empresa.rfc || 'N/A'}</p>
                 </div>
                 <div class="cliente-acciones">
                     <button class="btn-editar" onclick="editarEmpresaForm(${empresa.id})">Editar</button>
