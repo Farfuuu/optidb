@@ -32,9 +32,74 @@ let inactivityTime = function() {
 
 inactivityTime();
 
+// -------------------------------------------------------------
+//  NUEVA FUNCIÓN: BÚSQUEDA PARA AUTOCOMPLETAR
+// -------------------------------------------------------------
+function buscarClienteParaAutocompletar() {
+    // Usamos 'nombre_cliente' basado en el formData de agregarVenta
+    const nombreInput = document.getElementById('nombre_cliente'); 
+    const nombre = nombreInput ? nombreInput.value.trim() : '';
+
+    // Solo busca si hay al menos 3 caracteres
+    if (nombre.length < 3) return;
+
+    const formData = new FormData();
+    formData.append('action', 'buscar'); // Llama a buscarClientes() en clientes_ajax.php
+    formData.append('termino', nombre);
+
+    fetch('clientes_ajax.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Asumimos que los IDs de los campos son 'telefono' y 'email'
+        const telInput = document.getElementById('telefono');
+        const emailInput = document.getElementById('email');
+        
+        if (data.success && data.clientes.length > 0) {
+            // Cliente ENCONTRADO - Autocompletar con el primer resultado
+            const cliente = data.clientes[0];
+            
+            if (telInput) telInput.value = cliente.telefono || '';
+            if (emailInput) emailInput.value = cliente.email || '';
+            
+            // Si existe la función formatearTelefono, la aplica
+            if (typeof formatearTelefono === 'function' && telInput) {
+                formatearTelefono(telInput);
+            }
+            
+            showToast(`Cliente '${cliente.nombre}' encontrado. Datos autocompletados.`, 'info', 2000);
+
+        } else {
+            // Cliente NO ENCONTRADO - Limpiar campos (dejar listo para nuevo registro)
+            if (telInput) telInput.value = '';
+            if (emailInput) emailInput.value = '';
+            
+            showToast(`Cliente no encontrado. Ingresa los datos completos.`, 'info', 1500);
+        }
+    })
+    .catch(error => {
+        console.error('Error de conexión al buscar cliente para autocompletar:', error);
+        showToast('Error de conexión al buscar cliente', 'error');
+    });
+}
+// -------------------------------------------------------------
+
+
 // Cargar ventas al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarVentas();
+    
+    // ----------------------------------------------------------------
+    // NUEVO: Listener para AUTOCOMPLETADO
+    // ----------------------------------------------------------------
+    const nombreClienteInput = document.getElementById('nombre_cliente'); 
+    if (nombreClienteInput) {
+        // Ejecuta la búsqueda al perder el foco del campo
+        nombreClienteInput.addEventListener('blur', buscarClienteParaAutocompletar);
+    }
+    // ----------------------------------------------------------------
     
     // Manejar formulario de agregar
     document.getElementById('formAgregar').addEventListener('submit', function(e) {
@@ -60,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Sistema de notificaciones Toast
+// Sistema de notificaciones Toast (MODIFICADO: Sin emojis)
 function showToast(message, type = 'info', duration = 5000) {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -73,16 +138,9 @@ function showToast(message, type = 'info', duration = 5000) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-    };
-    
+    // Eliminado el código de iconos/emojis
     toast.innerHTML = `
         <div class="toast-content">
-            <span class="toast-icon">${icons[type] || icons.info}</span>
             <p class="toast-message">${message}</p>
         </div>
         <button class="toast-close" onclick="this.parentElement.remove()">×</button>
@@ -107,7 +165,7 @@ function showToast(message, type = 'info', duration = 5000) {
     return toast;
 }
 
-// Función para confirmación con Toast
+// Función para confirmación con Toast (MODIFICADO: Sin emojis)
 function confirmWithToast(question) {
     return new Promise((resolve) => {
         const toast = showToast(`
@@ -234,9 +292,9 @@ function agregarVenta() {
 function editarVentaForm(id) {
     const ventaItem = document.querySelector(`.venta-item[data-id="${id}"]`);
     const nombre = ventaItem.querySelector('h4').textContent;
-    const fechaTexto = ventaItem.querySelector('p:nth-child(2)').textContent.replace('📅 Fecha: ', '');
-    const totalTexto = ventaItem.querySelector('p:nth-child(3)').textContent.replace('💰 Total: ', '');
-    const armazon = ventaItem.querySelector('p:nth-child(4)').textContent.replace('👓 Armazón: ', '');
+    const fechaTexto = ventaItem.querySelector('p:nth-child(2)').textContent.replace(' Fecha: ', '');
+    const totalTexto = ventaItem.querySelector('p:nth-child(3)').textContent.replace(' Total: ', '');
+    const armazon = ventaItem.querySelector('p:nth-child(4)').textContent.replace(' Armazón: ', '');
     
     // Convertir fecha al formato YYYY-MM-DD
     const [dia, mes, anio] = fechaTexto.split('/');
