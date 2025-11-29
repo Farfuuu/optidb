@@ -334,15 +334,15 @@ function agregarCliente() {
 function editarClienteForm(id) {
     const clienteItem = document.querySelector(`.cliente-item[data-id="${id}"]`);
     const nombre = clienteItem.querySelector('h4').textContent;
-    const telefono = clienteItem.querySelector('p:nth-child(2)').textContent.replace('📞 ', '');
-    const email = clienteItem.querySelector('p:nth-child(3)').textContent.replace('📧 ', '');
-    const tipo_cliente = clienteItem.querySelector('p:nth-child(4)').textContent.replace('🏷️ ', '');
+    const telefono = clienteItem.querySelector('p:nth-child(2)').textContent.replace('Numero de Telefono ', '');
+    const email = clienteItem.querySelector('p:nth-child(3)').textContent.replace('Email ', '');
+    const tipo_cliente = clienteItem.querySelector('p:nth-child(4)').textContent.replace('Tipo de Cliente ', '');
     
     // Buscar el elemento de empresa si existe
     let empresa = '';
     const empresaElement = clienteItem.querySelector('p:nth-child(5)');
-    if (empresaElement && empresaElement.textContent.startsWith('🏢')) {
-        empresa = empresaElement.textContent.replace('🏢 ', '');
+    if (empresaElement && empresaElement.textContent.startsWith('Empresa')) {
+        empresa = empresaElement.textContent.replace('Empresa ', '');
     }
     
     document.getElementById('edit_id').value = id;
