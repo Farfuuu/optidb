@@ -232,9 +232,9 @@ function agregarExamen() {
 function editarExamenForm(id) {
     const examenItem = document.querySelector(`.examen-item[data-id="${id}"]`);
     const nombre = examenItem.querySelector('h4').textContent;
-    const idExamen = examenItem.querySelector('p:nth-child(2)').textContent.replace('📋 ID: ', '');
-    const fechaTexto = examenItem.querySelector('p:nth-child(3)').textContent.replace('📅 Fecha: ', '');
-    const graduaciones = examenItem.querySelector('p:nth-child(4)').textContent.replace('👁️ OI: ', '').split(' | OD: ');
+    const idExamen = examenItem.querySelector('p:nth-child(2)').textContent.replace(' ID: ', '');
+    const fechaTexto = examenItem.querySelector('p:nth-child(3)').textContent.replace(' Fecha: ', '');
+    const graduaciones = examenItem.querySelector('p:nth-child(4)').textContent.replace(' OI: ', '').split(' | OD: ');
     
     // Convertir fecha al formato YYYY-MM-DD
     const [dia, mes, anio] = fechaTexto.split('/');
