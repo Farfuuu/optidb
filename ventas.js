@@ -33,7 +33,54 @@ let inactivityTime = function() {
 inactivityTime();
 
 // -------------------------------------------------------------
-//  NUEVA FUNCIÓN: BÚSQUEDA PARA AUTOCOMPLETAR
+//  LÓGICA DE UTILIDAD (Integrada desde el módulo de clientes)
+// -------------------------------------------------------------
+
+function formatearTelefono(input) {
+    let valor = input.value.replace(/\D/g, '');
+    
+    if (valor.length > 3 && valor.length <= 6) {
+        valor = valor.substring(0, 3) + '-' + valor.substring(3);
+    } else if (valor.length > 6) {
+        valor = valor.substring(0, 3) + '-' + valor.substring(3, 6) + '-' + valor.substring(6, 10);
+    }
+    
+    input.value = valor;
+}
+
+function soloNumeros(event) {
+    const tecla = event.key;
+    if (['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(tecla)) {
+        return true;
+    }
+    
+    if (!/^\d$/.test(tecla)) {
+        event.preventDefault();
+        return false;
+    }
+    
+    return true;
+}
+
+function inicializarFormatoTelefono() {
+    // Busca inputs de teléfono para la forma de agregar y editar ventas
+    const inputsTelefono = document.querySelectorAll('#formAgregar input[type="text"][id*="telefono"], #formEditar input[type="text"][id*="telefono"]');
+    
+    inputsTelefono.forEach(input => {
+        input.addEventListener('keydown', soloNumeros);
+        input.addEventListener('input', function() {
+            formatearTelefono(this);
+        });
+        
+        if (input.value) {
+            formatearTelefono(input);
+        }
+    });
+}
+
+
+// -------------------------------------------------------------
+//  FUNCIÓN CLAVE: BÚSQUEDA PARA AUTOCOMPLETAR
 // -------------------------------------------------------------
 function buscarClienteParaAutocompletar() {
     // Usamos 'nombre_cliente' basado en el formData de agregarVenta
@@ -53,7 +100,7 @@ function buscarClienteParaAutocompletar() {
     })
     .then(response => response.json())
     .then(data => {
-        // Asumimos que los IDs de los campos son 'telefono' y 'email'
+        // Asumimos que los IDs de los campos son 'telefono' y 'email' en el formulario de ventas
         const telInput = document.getElementById('telefono');
         const emailInput = document.getElementById('email');
         
@@ -61,18 +108,16 @@ function buscarClienteParaAutocompletar() {
             // Cliente ENCONTRADO - Autocompletar con el primer resultado
             const cliente = data.clientes[0];
             
-            if (telInput) telInput.value = cliente.telefono || '';
-            if (emailInput) emailInput.value = cliente.email || '';
-            
-            // Si existe la función formatearTelefono, la aplica
-            if (typeof formatearTelefono === 'function' && telInput) {
+            if (telInput) {
+                telInput.value = cliente.telefono || '';
                 formatearTelefono(telInput);
             }
+            if (emailInput) emailInput.value = cliente.email || '';
             
             showToast(`Cliente '${cliente.nombre}' encontrado. Datos autocompletados.`, 'info', 2000);
 
         } else {
-            // Cliente NO ENCONTRADO - Limpiar campos (dejar listo para nuevo registro)
+            // Cliente NO ENCONTRADO - Limpiar campos
             if (telInput) telInput.value = '';
             if (emailInput) emailInput.value = '';
             
@@ -89,10 +134,13 @@ function buscarClienteParaAutocompletar() {
 
 // Cargar ventas al iniciar
 document.addEventListener('DOMContentLoaded', function() {
+    // IMPORTANTE: Inicializamos el formateador de teléfono ANTES de cargar ventas
+    inicializarFormatoTelefono(); 
+    
     cargarVentas();
     
     // ----------------------------------------------------------------
-    // NUEVO: Listener para AUTOCOMPLETADO
+    // 🟢 CÓDIGO AÑADIDO: Listener para AUTOCOMPLETADO
     // ----------------------------------------------------------------
     const nombreClienteInput = document.getElementById('nombre_cliente'); 
     if (nombreClienteInput) {
@@ -125,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Sistema de notificaciones Toast (MODIFICADO: Sin emojis)
+// Sistema de notificaciones Toast (MODIFICADO: Sin emojis ni iconos)
 function showToast(message, type = 'info', duration = 5000) {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -138,7 +186,7 @@ function showToast(message, type = 'info', duration = 5000) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     
-    // Eliminado el código de iconos/emojis
+    // Eliminado el código de iconos/emojis para cumplir con la solicitud
     toast.innerHTML = `
         <div class="toast-content">
             <p class="toast-message">${message}</p>
