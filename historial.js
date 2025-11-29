@@ -177,7 +177,7 @@ function mostrarHistoriales(historiales) {
                     <h4>${historial.nombre_paciente}</h4>
                     <p>📋 ID: ${historial.id_historial || 'N/A'}</p>
                     <p>📅 Fecha: ${fechaFormateada}</p>
-                    <p>📝 ${descripcionCorta}</p>
+                    <p> DESC ${descripcionCorta}</p>
                     <p>🏥 Cirugías: ${historial.cirugias_previas || 'Ninguna'}</p>
                 </div>
                 <div class="historial-acciones">
