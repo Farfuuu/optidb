@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'conexion.php';
+// Asegúrate de que tu archivo de conexión devuelva un objeto PDO llamado $conexion.
+require_once 'conexion.php'; 
 
 // Asegura que la respuesta sea en formato JSON para AJAX
 header('Content-Type: application/json');
@@ -32,12 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
                 eliminarCliente();
                 break;
             case 'buscar':
-                buscarClientes(); // <--- La función que implementa el autocompletado
+                buscarClientes(); // <-- Función clave para el autocompletado
                 break;
             default:
                 echo json_encode(['success' => false, 'message' => 'Acción no válida.']);
         }
     } catch (PDOException $e) {
+        // En un entorno real, solo registrarías el error y mostrarías un mensaje genérico.
         echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
     }
 } else {
@@ -49,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 // ----------------------------------------------------------------
 
 /**
- * Busca clientes por nombre (para autocompletar)
- * Devuelve un array de clientes que coinciden con el término.
+ * Función que busca clientes por nombre para el autocompletado en JS.
  */
 function buscarClientes() {
     global $conexion;
     
+    // El término de búsqueda es el nombre que el usuario está escribiendo en el formulario de ventas.
     $termino = isset($_POST['termino']) ? trim($_POST['termino']) : '';
     
     if (empty($termino)) {
@@ -62,7 +64,7 @@ function buscarClientes() {
         return;
     }
 
-    // Buscamos campos clave para autocompletar
+    // Buscamos campos clave que serán usados para el autocompletado
     $sql = "SELECT id, nombre, telefono, email, tipo_cliente, empresa_nombre 
             FROM clientes 
             WHERE nombre LIKE :termino 
@@ -70,7 +72,7 @@ function buscarClientes() {
 
     $stmt = $conexion->prepare($sql);
     
-    // El ' . '%' busca nombres que COMIENCEN con el texto (mejor para autocompletar)
+    // El ' . '%' busca nombres que COMIENCEN con el texto
     $stmt->execute([':termino' => $termino . '%']);
     
     $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -90,7 +92,7 @@ function agregarCliente() {
     $telefono = trim($_POST['telefono'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $tipo = $_POST['tipo_cliente'] ?? 'Regular';
-    $empresa = trim($_POST['empresa_nombre'] ?? ''); // Asumo que este campo existe en tu DB
+    $empresa = trim($_POST['empresa_nombre'] ?? '');
     
     if (empty($nombre)) {
         echo json_encode(['success' => false, 'message' => 'El nombre del cliente es obligatorio.']);
@@ -109,14 +111,11 @@ function agregarCliente() {
         ':empresa' => $empresa
     ]);
     
-    // Devolver el ID es útil si el JS necesita referenciar al cliente recién creado
     echo json_encode(['success' => true, 'message' => 'Cliente agregado correctamente', 'cliente_id' => $conexion->lastInsertId()]);
 }
 
 function obtenerClientes() {
     global $conexion;
-    
-    // Se añade empresa_nombre a la consulta para mostrarlo en el frontend
     $sql = "SELECT id, nombre, telefono, email, tipo_cliente, empresa_nombre, fecha_creacion FROM clientes ORDER BY fecha_creacion DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
