@@ -354,9 +354,9 @@ function mostrarClientes(clientes) {
             <div class="cliente-item" data-id="${cliente.id}">
                 <div class="cliente-info">
                     <h4>${cliente.nombre}</h4>
-                    <p>${cliente.telefono || 'No especificado'}</p>
-                    <p>${cliente.email || 'No especificado'}</p>
-                    <p>${cliente.tipo_cliente || 'Regular'}</p>
+                    <p>Teléfono: ${cliente.telefono || 'No especificado'}</p>
+                    <p>Correo: ${cliente.email || 'No especificado'}</p>
+                    <p>Tipo: ${cliente.tipo_cliente || 'Regular'}</p>
                     ${empresaHTML}
                 </div>
                 <div class="cliente-acciones">
