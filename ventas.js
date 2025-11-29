@@ -172,9 +172,9 @@ function mostrarVentas(ventas) {
             <div class="venta-item" data-id="${venta.id}">
                 <div class="venta-info">
                     <h4>${venta.nombre_cliente}</h4>
-                    <p>📅 Fecha: ${fechaFormateada}</p>
-                    <p>💰 Total: ${totalFormateado}</p>
-                    <p>👓 Armazón: ${venta.tipo_armazon || 'N/A'}</p>
+                    <p>Fecha: ${fechaFormateada}</p>
+                    <p>Total: ${totalFormateado}</p>
+                    <p>Armazón: ${venta.tipo_armazon || 'N/A'}</p>
                 </div>
                 <div class="venta-acciones">
                     <button class="btn-editar" onclick="editarVentaForm(${venta.id})">Editar</button>
