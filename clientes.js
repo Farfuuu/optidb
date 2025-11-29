@@ -87,15 +87,93 @@ function fetchAndPopulateEmpresas() {
         console.error('Error al cargar empresas:', err);
     });
 }
+
+// -------------------------------------------------------------
+//  NUEVA FUNCIÓN: BÚSQUEDA PARA AUTOCOMPLETAR
+// -------------------------------------------------------------
+function buscarClienteParaAutocompletar() {
+    // Busca en el formulario de agregar cliente (ID 'nombre')
+    const nombreInput = document.getElementById('nombre'); 
+    const nombre = nombreInput ? nombreInput.value.trim() : '';
+
+    // Solo busca si hay al menos 3 caracteres
+    if (nombre.length < 3) return;
+
+    const formData = new FormData();
+    formData.append('action', 'buscar'); // Llama a buscarClientes() en clientes_ajax.php
+    formData.append('termino', nombre);
+
+    fetch('clientes_ajax.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Obtenemos los campos a rellenar
+        const telInput = document.getElementById('telefono');
+        const emailInput = document.getElementById('email');
+        const tipoInput = document.getElementById('tipo_cliente');
+        const empresaInput = document.getElementById('empresa_nombre');
+        
+        if (data.success && data.clientes.length > 0) {
+            // Caso A: Cliente ENCONTRADO - Autocompletar
+            const cliente = data.clientes[0];
+            
+            // 1. Rellenar campos y aplicar formato
+            if (telInput) {
+                telInput.value = cliente.telefono || '';
+                if (typeof formatearTelefono === 'function') formatearTelefono(telInput);
+            }
+            if (emailInput) emailInput.value = cliente.email || '';
+            
+            // 2. Rellenar tipo y empresa
+            if (tipoInput) {
+                tipoInput.value = cliente.tipo_cliente || 'Regular';
+                toggleEmpresaField(cliente.tipo_cliente); // Muestra/oculta campo de empresa
+            }
+            if (empresaInput) empresaInput.value = cliente.empresa_nombre || ''; 
+            
+            showToast(`Cliente '${cliente.nombre}' encontrado. Datos autocompletados.`, 'info', 2000);
+
+        } else {
+            // Caso B: Cliente NO ENCONTRADO - Limpiar campos
+            if (telInput) telInput.value = '';
+            if (emailInput) emailInput.value = '';
+            
+            showToast(`Cliente no encontrado. Ingresa los datos completos.`, 'info', 1500);
+        }
+    })
+    .catch(error => {
+        console.error('Error de conexión al buscar cliente para autocompletar:', error);
+        showToast('Error de conexión al buscar cliente', 'error');
+    });
+}
+// -------------------------------------------------------------
+
+
 // Cargar clientes al iniciar
 document.addEventListener('DOMContentLoaded', function() {
     cargarClientes();
 
     // Poblar selects de empresas y luego inicializar visibilidad
     fetchAndPopulateEmpresas();
-    // Inicializar el campo de empresa (usar el valor actual si existe)
+    
+    // Inicializar el campo de empresa y agregar listener de cambio
     const tipoSelect = document.getElementById('tipo_cliente');
-    if (tipoSelect) toggleEmpresaField(tipoSelect.value);
+    if (tipoSelect) {
+        toggleEmpresaField(tipoSelect.value);
+        tipoSelect.addEventListener('change', (e) => toggleEmpresaField(e.target.value));
+    }
+    
+    // ----------------------------------------------------------------
+    // NUEVO: Listener para AUTOCOMPLETADO
+    // ----------------------------------------------------------------
+    const nombreInput = document.getElementById('nombre'); // Campo Nombre del formulario 'formAgregar'
+    if (nombreInput) {
+        // Ejecuta la búsqueda al perder el foco del campo
+        nombreInput.addEventListener('blur', buscarClienteParaAutocompletar);
+    }
+    // ----------------------------------------------------------------
     
     // Manejar formulario de agregar
     document.getElementById('formAgregar').addEventListener('submit', function(e) {
@@ -120,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Sistema de notificaciones Toast
+// Sistema de notificaciones Toast (código sin cambios)
 function showToast(message, type = 'info', duration = 5000) {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -134,10 +212,10 @@ function showToast(message, type = 'info', duration = 5000) {
     toast.className = `toast ${type}`;
     
     const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
+        success: '&#x2705;', // ✅
+        error: '&#x274C;', // ❌
+        warning: '&#x26A0;', // ⚠️
+        info: '&#x2139;' // ℹ️
     };
     
     toast.innerHTML = `
@@ -167,7 +245,7 @@ function showToast(message, type = 'info', duration = 5000) {
     return toast;
 }
 
-// Función para confirmación con Toast
+// Función para confirmación con Toast (código sin cambios)
 function confirmWithToast(question) {
     return new Promise((resolve) => {
         const toast = showToast(`
@@ -187,7 +265,7 @@ function confirmWithToast(question) {
     });
 }
 
-// Función para formatear el teléfono mientras se escribe
+// Función para formatear el teléfono mientras se escribe (código sin cambios)
 function formatearTelefono(input) {
     let valor = input.value.replace(/\D/g, '');
     
@@ -200,7 +278,7 @@ function formatearTelefono(input) {
     input.value = valor;
 }
 
-// Función para validar que solo se ingresen números
+// Función para validar que solo se ingresen números (código sin cambios)
 function soloNumeros(event) {
     const tecla = event.key;
     if (['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(tecla)) {
@@ -215,7 +293,7 @@ function soloNumeros(event) {
     return true;
 }
 
-// Función para inicializar el formateo de teléfonos
+// Función para inicializar el formateo de teléfonos (código sin cambios)
 function inicializarFormatoTelefono() {
     const inputsTelefono = document.querySelectorAll('input[type="text"][id*="telefono"]');
     
