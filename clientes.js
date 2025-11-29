@@ -269,16 +269,16 @@ function mostrarClientes(clientes) {
     clientes.forEach(cliente => {
         let empresaHTML = '';
         if (cliente.empresa_nombre) {
-            empresaHTML = `<p>🏢 ${cliente.empresa_nombre}</p>`;
+            empresaHTML = `<p>${cliente.empresa_nombre}</p>`;
         }
         
         const clienteHTML = `
             <div class="cliente-item" data-id="${cliente.id}">
                 <div class="cliente-info">
                     <h4>${cliente.nombre}</h4>
-                    <p>📞 ${cliente.telefono || 'No especificado'}</p>
-                    <p>📧 ${cliente.email || 'No especificado'}</p>
-                    <p>🏷️ ${cliente.tipo_cliente || 'Regular'}</p>
+                    <p>${cliente.telefono || 'No especificado'}</p>
+                    <p>${cliente.email || 'No especificado'}</p>
+                    <p>${cliente.tipo_cliente || 'Regular'}</p>
                     ${empresaHTML}
                 </div>
                 <div class="cliente-acciones">
