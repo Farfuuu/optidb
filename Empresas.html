@@ -60,7 +60,8 @@
               <input type="text" id="direccion" name="direccion">
               
               <label for="rfc">RFC</label>
-              <input type="text" id="rfc" name="rfc" maxlength="13" pattern="[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}" title="Formato de RFC Invalido" placeholder="RFC de la empresa" required>
+              <input type="text" id="rfc" name="rfc" maxlength="13" pattern="[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}" title="Formato de RFC Invalido" placeholder="RFC de la empresa"
+                style="text-transform: uppercase;" required>
               
               <button type="submit" class="btn">Agregar</button>
             </form>
@@ -86,7 +87,8 @@
               <textarea id="edit_direccion" name="direccion" rows="3"></textarea>
               
               <label for="edit_rfc">RFC</label>
-              <input type="text" id="edit_rfc" name="rfc" maxlength="13" pattern="[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}" title="Formato de RFC Invalido" required>
+              <input type="text" id="edit_rfc" name="rfc" maxlength="13" pattern="[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}" title="Formato de RFC Invalido" 
+                style="text-transform: uppercase;" required>
               
               <button type="submit" class="btn">Actualizar</button>
               <button type="button" class="btn cancelar-btn" onclick="cancelarEdicion()">Cancelar</button>
